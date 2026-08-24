@@ -1,0 +1,92 @@
+events {
+    worker_connections 2048;
+}
+
+http {
+    # Paramètres de stabilité globale et de fluidité des flux
+    keepalive_timeout 3600;
+    proxy_read_timeout 3600;
+    proxy_send_timeout 3600;
+    tcp_nodelay on;
+    tcp_nopush on;
+
+    server {
+        listen 8080;
+
+        # Page d'accueil de vérification (équivalent de "NOSTRA Proxy Online")
+        location = / {
+            default_type text/plain;
+            return 200 "NOSTRA Proxy Online\n";
+        }
+
+        # ==========================================
+        # PREMIER VPS (79.133.42.185)
+        # ==========================================
+        location /vps1/vless-ws {
+            proxy_pass http://79.133.42.185:10001;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_buffering off;
+        }
+
+        location /vps1/vmess-ws {
+            proxy_pass http://79.133.42.185:10003;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_buffering off;
+        }
+
+        location /vps1/trojan-ws {
+            proxy_pass http://79.133.42.185:10002;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_buffering off;
+        }
+
+        location /vps1/socks {
+            proxy_pass http://79.133.42.185:2004;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_buffering off;
+        }
+
+        # ==========================================
+        # SECOND VPS (191.96.235.32)
+        # ==========================================
+        location /vps2/vless-ws {
+            proxy_pass http://191.96.235.32:443;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_buffering off;
+        }
+
+        location /vps2/vmess-ws {
+            proxy_pass http://191.96.235.32:443;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_buffering off;
+        }
+
+        location /vps2/trojan-ws {
+            proxy_pass http://191.96.235.32:443;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+            proxy_set_header Host $host;
+            proxy_buffering off;
+        }
+    }
+}
+
